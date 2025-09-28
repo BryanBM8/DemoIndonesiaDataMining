@@ -5,10 +5,36 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import altair as alt
+import re
 
 def show():
     df = st.session_state['df']
    
+    mention_df = (
+    pd.Series(
+        [
+            m
+            for lst in df['full_text'].fillna('').apply(lambda x: re.findall(r'@\w+', str(x)))
+            for m in lst
+        ]
+    )
+    .value_counts()
+    .reset_index()
+)
+    
+    hashtag_df = (
+    pd.Series(
+        [
+            h
+            for lst in df['full_text'].fillna('').apply(lambda x: re.findall(r'#\w+', str(x)))
+            for h in lst
+        ]
+    )
+    .value_counts()
+    .reset_index()
+)
+    mention_df.columns = ['mention', 'count']
+    hashtag_df.columns = ['hashtag', 'count']
     # st.dataframe(df, use_container_width=True)
 
     st.title("Mapping Tweets by Time Based on Hours")
@@ -179,3 +205,20 @@ def show():
     st.title("Most Entity Roles")
     st.dataframe(summary)
 
+    st.title("Twitter Mention Analysis")
+
+    st.subheader("Most Mentioned Table")
+    st.dataframe(mention_df)
+
+    st.subheader("Bar Chart Most Mentioned")
+    st.bar_chart(mention_df.set_index('mention')['count'])
+
+
+
+    st.title("Twitter Hashtag Analysis")
+
+    st.subheader("Most Hashtag Table")
+    st.dataframe(hashtag_df)
+
+    st.subheader("Bar Chart Most Hashtag")
+    st.bar_chart(hashtag_df.set_index('hashtag')['count'])

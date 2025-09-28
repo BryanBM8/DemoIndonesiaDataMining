@@ -57,10 +57,10 @@ if "df" not in st.session_state:
 
 
 
-st.subheader("Distribution of Tweets per University")
+st.subheader("Total Tweets")
 
 total_tweet = len(df)
-st.metric(label="Total Tweets (Overall)", value=total_tweet)
+st.metric(label='Scrape Result', value=total_tweet)
 
 
 
